@@ -2,6 +2,9 @@ package br.com.cupomapi.cupomapi.service;
 
 
 import br.com.cupomapi.cupomapi.dto.CupomDTO;
+import br.com.cupomapi.cupomapi.entity.CupomEntity;
+import br.com.cupomapi.cupomapi.exception.RegraDeNegocioException;
+import br.com.cupomapi.cupomapi.repository.CupomRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +20,8 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @RequiredArgsConstructor
 public class CupomService {
-
     private final ObjectMapper objectMapper;
+    private final CupomRepository cupomRepository;
 
     @KafkaListener(
             clientIdPrefix = "{$spring.kafka.consumer.group-id}",
@@ -27,8 +30,18 @@ public class CupomService {
     )
     public void consumirCupom(@Payload String mensagem) throws JsonProcessingException {
         CupomDTO cupomDTO = objectMapper.readValue(mensagem, CupomDTO.class);
-        log.info("{}: {} {} {}", cupomDTO.getEmail(),cupomDTO.getDataCriacao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                cupomDTO.getDataVencimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),cupomDTO.getDesconto());
+        CupomEntity cupom = objectMapper.convertValue(cupomDTO, CupomEntity.class);
+        cupomRepository.save(cupom);
 
+        log.info("{}: {} {} {}", cupomDTO.getEmail(),cupomDTO.getDataCriacao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                cupomDTO.getDataVencimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),cupomDTO.getDesconto());
+    }
+
+    public CupomDTO findByEmail(String email)  throws RegraDeNegocioException{
+        CupomEntity cupom = cupomRepository.findByEmail(email);
+        if(cupom == null){
+            throw new RegraDeNegocioException("Cupom não encontrado!");
+        }
+        return objectMapper.convertValue(cupom, CupomDTO.class);
     }
 }

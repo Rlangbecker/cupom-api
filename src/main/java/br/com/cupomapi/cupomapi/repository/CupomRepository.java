@@ -5,4 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface CupomRepository extends MongoRepository<CupomEntity, Integer> {
 
+    CupomEntity findByEmail(String email);
+
 }
