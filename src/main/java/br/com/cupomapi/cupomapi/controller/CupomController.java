@@ -27,4 +27,12 @@ public class CupomController {
         log.info("Cupom encontrado com sucesso.");
         return new ResponseEntity<>(cupom, HttpStatus.OK);
     }
+
+    @GetMapping("/desativar-cupom")
+    public ResponseEntity<Void> desativarCupom(@RequestParam String email) throws RegraDeNegocioException{
+        log.info("Desativando cupom...");
+        cupomService.desativarCupom(email);
+        log.info("Cupom desativado com sucesso.");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

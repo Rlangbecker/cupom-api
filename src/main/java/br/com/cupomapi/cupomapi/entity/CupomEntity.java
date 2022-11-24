@@ -21,6 +21,8 @@ public class CupomEntity {
 
     private String email;
 
+    private boolean ativo;
+
     private Double desconto;
 
     private LocalDate dataCriacao;

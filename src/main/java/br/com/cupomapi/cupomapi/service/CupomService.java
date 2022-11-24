@@ -26,7 +26,7 @@ public class CupomService {
     @KafkaListener(
             clientIdPrefix = "{$spring.kafka.consumer.group-id}",
             groupId = "{$spring.kafka.consumer.group-id}",
-            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"0"})}
+            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"1"})}
     )
     public void consumirCupom(@Payload String mensagem) throws JsonProcessingException {
         CupomDTO cupomDTO = objectMapper.readValue(mensagem, CupomDTO.class);
@@ -43,5 +43,11 @@ public class CupomService {
             throw new RegraDeNegocioException("Cupom não encontrado!");
         }
         return objectMapper.convertValue(cupom, CupomDTO.class);
+    }
+
+    public void desativarCupom(String email) throws RegraDeNegocioException{
+        CupomEntity cupom = cupomRepository.findByEmail(email);
+        cupom.setAtivo(false);
+        cupomRepository.save(cupom);
     }
 }
