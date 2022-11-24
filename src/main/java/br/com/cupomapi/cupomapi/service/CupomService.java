@@ -40,7 +40,9 @@ public class CupomService {
     public CupomDTO findByEmail(String email)  throws RegraDeNegocioException{
         CupomEntity cupom = cupomRepository.findByEmail(email);
         if(cupom == null){
-            throw new RegraDeNegocioException("Cupom não encontrado!");
+            CupomDTO cupomDTO = new CupomDTO();
+            cupomDTO.setAtivo(false);
+            return cupomDTO;
         }
         return objectMapper.convertValue(cupom, CupomDTO.class);
     }

@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +18,7 @@ public class CupomController {
     private final CupomService cupomService;
 
     @GetMapping
-    public ResponseEntity<CupomDTO> findByEmail(@RequestParam String email)throws RegraDeNegocioException {
+    public ResponseEntity<CupomDTO> findByEmail(@RequestBody String email)throws RegraDeNegocioException {
         log.info("Buscando cupom por email...");
         CupomDTO cupom = cupomService.findByEmail(email);
         log.info("Cupom encontrado com sucesso.");
@@ -29,7 +26,7 @@ public class CupomController {
     }
 
     @GetMapping("/desativar-cupom")
-    public ResponseEntity<Void> desativarCupom(@RequestParam String email) throws RegraDeNegocioException{
+    public ResponseEntity<Void> desativarCupom(@RequestBody String email) throws RegraDeNegocioException{
         log.info("Desativando cupom...");
         cupomService.desativarCupom(email);
         log.info("Cupom desativado com sucesso.");
