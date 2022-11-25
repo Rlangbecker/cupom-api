@@ -35,17 +35,7 @@ public class SecurityConfiguration {
 
         return http.build();
     }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers(
-                "/v3/api-docs",
-                "/v3/api-docs/**",
-                "/swagger-resources/**",
-                "/swagger-ui/**"
-        );
-    }
-
+    
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
