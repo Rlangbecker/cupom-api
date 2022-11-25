@@ -41,17 +41,12 @@ public class CupomService {
                 cupomDTO.getDataVencimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),cupomDTO.getDesconto());
     }
 
-    public CupomDTO findByEmail(String email)  throws RegraDeNegocioException{
+    public CupomDTO findByEmail(String email){
         CupomEntity cupom = cupomRepository.findFirstByEmailAndAtivo(email, true);
-//        if(cupom == null){
-//            CupomDTO cupomDTO = new CupomDTO();
-//            cupomDTO.setAtivo(false);
-//            return cupomDTO;
-//        }
         return objectMapper.convertValue(cupom, CupomDTO.class);
     }
 
-    public void desativarCupom(String email) throws RegraDeNegocioException{
+    public void desativarCupom(String email){
         CupomEntity cupom = cupomRepository.findFirstByEmailAndAtivo(email, true);
         cupom.setAtivo(false);
         cupomRepository.save(cupom);
