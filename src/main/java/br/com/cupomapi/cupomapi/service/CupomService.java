@@ -12,9 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -38,18 +41,29 @@ public class CupomService {
     }
 
     public CupomDTO findByEmail(String email)  throws RegraDeNegocioException{
-        CupomEntity cupom = cupomRepository.findByEmail(email);
-        if(cupom == null){
-            CupomDTO cupomDTO = new CupomDTO();
-            cupomDTO.setAtivo(false);
-            return cupomDTO;
-        }
+        CupomEntity cupom = cupomRepository.findFirstByEmailAndAtivo(email, true);
+//        if(cupom == null){
+//            CupomDTO cupomDTO = new CupomDTO();
+//            cupomDTO.setAtivo(false);
+//            return cupomDTO;
+//        }
         return objectMapper.convertValue(cupom, CupomDTO.class);
     }
 
     public void desativarCupom(String email) throws RegraDeNegocioException{
-        CupomEntity cupom = cupomRepository.findByEmail(email);
+        CupomEntity cupom = cupomRepository.findFirstByEmailAndAtivo(email, true);
         cupom.setAtivo(false);
         cupomRepository.save(cupom);
+    }
+
+    @Scheduled(cron = "0 1 * * * *")
+    public void desativarCupomVencido(){
+        List<CupomEntity> cupons = cupomRepository.findAllByDataVencimento(LocalDate.now().minusDays(1))
+                .stream()
+                .map(cupom -> {
+                    cupom.setAtivo(false);
+                    return cupom;
+                }).toList();
+        cupomRepository.saveAll(cupons);
     }
 }
