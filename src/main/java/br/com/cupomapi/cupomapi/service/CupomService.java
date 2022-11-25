@@ -1,6 +1,7 @@
 package br.com.cupomapi.cupomapi.service;
 
 
+import br.com.cupomapi.cupomapi.dto.CupomAggregationDTO;
 import br.com.cupomapi.cupomapi.dto.CupomDTO;
 import br.com.cupomapi.cupomapi.entity.CupomEntity;
 import br.com.cupomapi.cupomapi.exception.RegraDeNegocioException;
@@ -65,5 +66,9 @@ public class CupomService {
                     return cupom;
                 }).toList();
         cupomRepository.saveAll(cupons);
+    }
+
+    public List<CupomAggregationDTO> groupByLog() {
+        return CupomRepository.groupByTipo();
     }
 }
