@@ -1,5 +1,6 @@
 package br.com.cupomapi.cupomapi.controller;
 
+import br.com.cupomapi.cupomapi.dto.CupomAggregationDTO;
 import br.com.cupomapi.cupomapi.dto.CupomDTO;
 import br.com.cupomapi.cupomapi.exception.RegraDeNegocioException;
 import br.com.cupomapi.cupomapi.service.CupomService;
@@ -8,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,5 +34,13 @@ public class CupomController {
         cupomService.desativarCupom(email);
         log.info("Cupom desativado com sucesso.");
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/quantidade-Log")
+    public ResponseEntity<List<CupomAggregationDTO>> groupByLog() {
+        log.info("Gerando lista de cupons por data de criação...");
+        List<CupomAggregationDTO> cupomAggregationDTO = cupomService.groupByLog();
+        log.info("Lista de Cupons gerada com sucesso.");
+        return new ResponseEntity<>(cupomAggregationDTO, HttpStatus.OK);
     }
 }

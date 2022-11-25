@@ -64,6 +64,6 @@ public class CupomService {
     }
 
     public List<CupomAggregationDTO> groupByLog() {
-        return CupomRepository.groupByTipo();
+        return cupomRepository.groupByTipo();
     }
 }
